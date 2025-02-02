@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiplayer Turn-Based Game</title>
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>Multiplayer Game</h1>
+    <button onclick="createRoom()">Create Room</button>
+    <input id="roomCode" placeholder="Enter Room Code">
+    <button onclick="joinRoom()">Join Room</button>
+    <p id="status"></p>
+    <p id="turnStatus"></p>
+    <button id="endTurnBtn" onclick="endTurn()" disabled>End Turn</button>
+
+    <script>
+        const socket = io();
+        let playerId = null;
+        let currentTurnPlayer = null;
+
+        function createRoom() {
+            socket.emit('create-room', (response) => {
+                if (response.success) {
+                    document.getElementById("status").innerText = `Room Created! Code: ${response.roomCode}`;
+                }
+            });
+        }
+
+        function joinRoom() {
+            const code = document.getElementById('roomCode').value;
+            socket.emit('join-room', code, (response) => {
+                if (response.success) {
+                    document.getElementById("status").innerText = `Joined Room: ${code}`;
+                    playerId = socket.id;
+                } else {
+                    alert(response.message);
+                }
+            });
+        }
+
+        function endTurn() {
+            const code = document.getElementById('roomCode').value;
+            socket.emit('end-turn', code);
+            document.getElementById("endTurnBtn").disabled = true;
+        }
+
+        socket.on('player-joined', (data) => {
+            console.log(`New player joined: ${data.id}`);
+        });
+
+        socket.on('turn-start', (data) => {
+            currentTurnPlayer = data.playerId;
+            if (playerId === data.playerId) {
+                document.getElementById("turnStatus").innerText = "Your Turn! You have 30 seconds.";
+                document.getElementById("endTurnBtn").disabled = false;
+            } else {
+                document.getElementById("turnStatus").innerText = `Waiting for Player ${data.playerId} to play...`;
+                document.getElementById("endTurnBtn").disabled = true;
+            }
+        });
+
+        socket.on('player-left', (data) => {
+            console.log(`Player ${data.id} left.`);
+        });
+    </script>
+</body>
+</html>
