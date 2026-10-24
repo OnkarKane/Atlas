@@ -21,9 +21,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 
 @Composable
-fun HomeScreen(){
+fun HomeScreen(navController: NavController){
     var usernameInput by remember { mutableStateOf("") }
     var roomCodeInput by remember { mutableStateOf("") }
     var joinRoom by remember { mutableStateOf(false) }
@@ -60,7 +61,7 @@ fun HomeScreen(){
             onClick = {
                 hasAttemptedSubmit = true
                 if (isUsernameValid) {
-                    // Handle Room Creation Logic here
+                    navController.navigate(Routes.CREATE_ROOM)
                 }
             },
             modifier = Modifier.padding(top = 16.dp)
