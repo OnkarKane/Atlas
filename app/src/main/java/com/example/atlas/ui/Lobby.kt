@@ -1,5 +1,7 @@
 package com.example.atlas.ui
 
+import android.content.ClipData
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,10 +36,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.ClipboardManager
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,7 +46,7 @@ import kotlin.random.Random
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateRoom(navController: NavController) {
+fun CreateRoomScreen(navController: NavController, username: String) {
     val playerNumbers = listOf(2, 3, 4, 5, 6, 7, 8)
     var numberOfPlayers by remember { mutableIntStateOf(playerNumbers.first()) }
     var expanded by remember { mutableStateOf(false) }
@@ -57,8 +57,8 @@ fun CreateRoom(navController: NavController) {
     var codeDialog by remember { mutableStateOf(false) }
     var roomCode by remember { mutableIntStateOf(0) }
 
-    // Clipboard manager to handle copying the code
-    val clipboardManager: ClipboardManager = LocalClipboardManager.current
+    // Context to access system services safely inside Composable
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -67,6 +67,7 @@ fun CreateRoom(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterVertically)
     ) {
+        Text(text = "Welcome, $username!", style = MaterialTheme.typography.headlineLarge)
         Text(
             text = "Create Room",
             style = MaterialTheme.typography.headlineMedium
@@ -127,7 +128,7 @@ fun CreateRoom(navController: NavController) {
                                 onClick = { timeLimit = item },
                                 role = Role.RadioButton
                             )
-                            .padding(vertical =.8.dp),
+                            .padding(vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
@@ -145,7 +146,6 @@ fun CreateRoom(navController: NavController) {
         // Action Button
         Button(
             onClick = {
-                // Generate a random 6-digit room code (or change logic as needed)
                 roomCode = Random.nextInt(100000, 999999)
                 codeDialog = true
             },
@@ -185,7 +185,9 @@ fun CreateRoom(navController: NavController) {
                         // Copy Button with Icon
                         OutlinedButton(
                             onClick = {
-                                clipboardManager.setText(AnnotatedString(roomCode.toString()))
+                                val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+                                val clipData = ClipData.newPlainText("Room Code", roomCode.toString())
+                                clipboardManager.setPrimaryClip(clipData)
                             },
                             modifier = Modifier.fillMaxWidth()
                         ) {
@@ -202,7 +204,6 @@ fun CreateRoom(navController: NavController) {
                     Button(
                         onClick = {
                             codeDialog = false
-                            // TODO: Add navigation to the actual game room screen here if needed
                             // navController.navigate("game_room/$roomCode")
                         }
                     ) {
@@ -219,4 +220,9 @@ fun CreateRoom(navController: NavController) {
             )
         }
     }
+}
+
+@Composable
+fun PlayerLobby() {
+
 }

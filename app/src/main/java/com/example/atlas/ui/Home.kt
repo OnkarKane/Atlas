@@ -61,7 +61,7 @@ fun HomeScreen(navController: NavController){
             onClick = {
                 hasAttemptedSubmit = true
                 if (isUsernameValid) {
-                    navController.navigate(Routes.CREATE_ROOM)
+                    navController.navigate("createRoom/${usernameInput.trim()}")
                 }
             },
             modifier = Modifier.padding(top = 16.dp)

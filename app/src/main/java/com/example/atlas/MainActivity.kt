@@ -9,7 +9,7 @@ import com.example.atlas.ui.HomeScreen
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.atlas.ui.Routes
-import com.example.atlas.ui.CreateRoom
+import com.example.atlas.ui.CreateRoomScreen
 
 
 class MainActivity : ComponentActivity() {
@@ -23,8 +23,9 @@ class MainActivity : ComponentActivity() {
                 composable(Routes.HOME){
                     HomeScreen(navController = navController)
                 }
-                composable(Routes.CREATE_ROOM){
-                    CreateRoom(navController = navController)
+                composable(Routes.CREATE_ROOM){backStackEntry ->
+                    val username = backStackEntry.arguments?.getString("username")?:""
+                    CreateRoomScreen(navController = navController, username = username)
                 }
             }
         }
