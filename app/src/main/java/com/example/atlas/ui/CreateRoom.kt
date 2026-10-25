@@ -148,6 +148,7 @@ fun CreateRoomScreen(navController: NavController, username: String) {
             onClick = {
                 roomCode = Random.nextInt(100000, 999999)
                 codeDialog = true
+
             },
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -220,9 +221,4 @@ fun CreateRoomScreen(navController: NavController, username: String) {
             )
         }
     }
-}
-
-@Composable
-fun PlayerLobby() {
-
 }
