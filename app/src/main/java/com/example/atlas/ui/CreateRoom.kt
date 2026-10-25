@@ -205,7 +205,7 @@ fun CreateRoomScreen(navController: NavController, username: String) {
                     Button(
                         onClick = {
                             codeDialog = false
-                            // navController.navigate("game_room/$roomCode")
+                            navController.navigate("playerlobby/$username/$roomCode/true")
                         }
                     ) {
                         Text(text = "Enter Room")
